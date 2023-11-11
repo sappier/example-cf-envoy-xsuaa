@@ -35,7 +35,7 @@ $ cd example-cf-envoy-xsuaa
 ### Envoy configuration
 
 There are many excellent resources about Envoy configuration.
-The [References](#References) section contains few links with more information.
+The [References](#References) section contains a few links with more information.
 
 To make the whole deployment easier, we use the [Ruby ERB](https://docs.ruby-lang.org/en/master/ERB.html)
 template to specify an envoy configuration.  The template takes the information from the application's
@@ -44,7 +44,14 @@ to the `xsuaa` instance bound to our application.
 
 The template is stored in the `envoy.yaml.erb` file.  And we highlight here the most important parts.
 
-A listener to receive all incoming requests on port `8080`:
+Extract XSUAA information from the application's binding:
+
+```yaml
+<% require 'uri' -%>
+<% XSUAA = URI.parse(VCAP_SERVICES["xsuaa"][0]["credentials"]["url"]) -%>
+```
+
+A listener to receive all incoming requests on port 8080:
 
 ```yaml
 static_resources:
@@ -55,7 +62,7 @@ static_resources:
 ```
 
 A `Jwt Authentication` filter configuration.  Sets the `issuer` to match the value from tokens,
-xsuaa server's URL for token verification and few other parameters:
+xsuaa server's URL for token verification and a few other parameters:
 
 ```yaml
           - name: envoy.filters.http.jwt_authn
@@ -109,7 +116,7 @@ It uses `cf-envoyproxy-buildpack` to run the envoy proxy as a sidecar process wi
 created from the `envoy.yaml.erb` template.
 
 The `python_buildpack` installs the `httpbin` web application with dependencies specified
-in the `requests.txt` file.  The application runs through the `gunicorn` http server on port `8000`.
+in the `requests.txt` file.  The application runs through the `gunicorn` http server on port 8000.
 
 The `services` section binds the service instance named `xsuaa` to our application.
 
@@ -118,7 +125,7 @@ And finally, it tells CloudFoundry to use our unprotected endpoint for health ch
 
 ## Deploy the application
 
-First we need to create an instance of xsuaa service with the name `xsuaa`, same as in the manifest.
+First, we need to create an instance of the xsuaa service with the name `xsuaa`, the same as in the manifest.
 
 ```
 $ cf create-service xsuaa application xsuaa
@@ -128,7 +135,7 @@ Service instance xsuaa created.
 OK
 ```
 
-Afterwards we can deploy the application:
+Afterwards, we can deploy the application:
 
 ```
 $ cf push
