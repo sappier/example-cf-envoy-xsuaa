@@ -1,0 +1,11 @@
+applications:
+- name: httpbin
+  memory: 256MB
+  buildpacks:
+    - https://github.com/r0mk1/cf-envoyproxy-buildpack.git
+    - python_buildpack
+  command: gunicorn -b 127.0.0.1:8000 -k gevent httpbin:app
+  services:
+    - xsuaa
+  health-check-type: http
+  health-check-http-endpoint: /robots.txt
