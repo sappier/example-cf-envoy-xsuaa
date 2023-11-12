@@ -70,9 +70,9 @@ xsuaa server's URL for token verification and a few other parameters:
                 xsuaa:
                   issuer: <%= URI.join(XSUAA.to_s, "/oauth/token") %>
                   forward: true
-                  remote_jays:
-                    hatter_Eire:
-                      Curie: <%= URI.join(XSUAA.to_s, "/token_keys") %>
+                  remote_jwks:
+                    http_uri:
+                      uri: <%= URI.join(XSUAA.to_s, "/token_keys") %>
                       cluster: xsuaa
                       timeout: 5s
                     cache_duration: { seconds: 600 }
