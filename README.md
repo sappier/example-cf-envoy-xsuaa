@@ -1,6 +1,6 @@
-# Securing API with Envoy and XSUAA in BTP CloudFoundry
+# Securing API with Envoy and XSUAA in BTP Cloud Foundry
 
-An example of protecting API endpoints with Envoy Proxy sidecar and XSUAA in BTP CloudFoundry.
+An example of protecting API endpoints with Envoy Proxy sidecar and XSUAA in BTP Cloud Foundry.
 
 
 ## Overview
@@ -10,17 +10,17 @@ complexity, improved maintainability and reusability, see [References](#Referenc
 A popular approach is to use Authentication sidecar. Istio service mesh is a well known example.
 
 The good news, Istio cornerstone [Envoy Proxy](https://www.envoyproxy.io/) is already used in
-CloudFoundry.  Ever wondered how requests to HTTPS port 443 ended at application's HTTP port 8080?
+Cloud Foundry.  Ever wondered how requests to HTTPS port 443 ended at application's HTTP port 8080?
 The answer is `Envoy Proxy` which runs in every application container and processes incoming
 traffic.
 
 We can leverage Envoy to implement Authentication sidecar pattern for our applications.
 
 As an example, we will deploy [httpbin](https://github.com/postmanlabs/httpbin) application
-to BTP CloudFoundry.  Envoy will intercept all incoming requests and check for a Jwt token.
-If the token is valid according to XSUAA, the request will be forwarded to the application for processing.
+to BTP Cloud Foundry.  Envoy sidecar process will intercept all incoming requests and check for a Jwt token.
+If the token is valid according to XSUAA, Envoy will forward the request to the application.
 
-![architecture](https://github.com/sappier/example-cf-envoy-xsuaa/assets/36699371/b677652c-e121-4978-9c63-be180fabd85b)
+![architecture](https://github.com/sappier/example-cf-envoy-xsuaa/assets/36699371/1b96881c-008b-4660-8637-0887298db6a7)
 
 
 ## Prepare application configuration
@@ -112,7 +112,7 @@ A relevant part of the `manifest.yml` is:
   health-check-http-endpoint: /robots.txt
 ```
 
-It uses `cf-envoyproxy-buildpack` to run the envoy proxy as a sidecar process with the configuration
+It uses `cf-envoyproxy-buildpack` to run the Envoy Proxy as a sidecar process with the configuration
 created from the `envoy.yaml.erb` template.
 
 The `python_buildpack` installs the `httpbin` web application with dependencies specified
@@ -120,7 +120,7 @@ in the `requests.txt` file.  The application runs through the `gunicorn` http se
 
 The `services` section binds the service instance named `xsuaa` to our application.
 
-And finally, it tells CloudFoundry to use our unprotected endpoint for health checks.
+And finally, it tells Cloud Foundry to use our unprotected endpoint for health checks.
 
 
 ## Deploy the application
@@ -199,7 +199,7 @@ Or even export statistics to Prometheus:
 cf ssh httpbin -c 'curl -s localhost:9909/stats/prometheus'
 ```
 
-Feel free to create an ssh tunnel `cf ssh -L 9909:localhost:9909 httpbin` and explore extra options pointing a browser to [localhost:9909](http://localhost:9909)".
+Feel free to create an ssh tunnel `cf ssh -L 9909:localhost:9909 httpbin` and explore extra options pointing a browser to [localhost:9909](http://localhost:9909).
 
 See more details at [Administration interface](https://www.envoyproxy.io/docs/envoy/latest/operations/admin).
 
@@ -211,5 +211,5 @@ See more details at [Administration interface](https://www.envoyproxy.io/docs/en
 2. [Envoy Configuration: Static](https://www.envoyproxy.io/docs/envoy/latest/start/quick-start/configuration-static)
 3. [Configuring JWT Authentication in Envoy Proxy](https://www.scottguymer.co.uk/post/configuring-jwt-authentication-in-envoy/)
 4. [ERB – Ruby Templating](https://docs.ruby-lang.org/en/master/ERB.html)
-5. [Envoy Proxy buildpack for CloudFoundry](https://github.com/r0mk1/cf-envoyproxy-buildpack)
-6. [Securing API with Envoy and XSUAA in BTP CloudFoundry](https://github.com/sappier/example-cf-envoy-xsuaa)
+5. [Envoy Proxy buildpack for Cloud Foundry](https://github.com/r0mk1/cf-envoyproxy-buildpack)
+6. [Securing API with Envoy and XSUAA in BTP Cloud Foundry](https://github.com/sappier/example-cf-envoy-xsuaa)
